@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum Checker - проверка заявок на лидерку Majestic RP</title>
+  <meta name="description" content="Forum Checker загружает тему с заявками, проверяет их по шаблону, отсеивает ЧС лидеров и считает онлайн кандидатов. Для Windows 10/11.">
+  <meta property="og:title" content="Forum Checker">
+  <meta property="og:description" content="Проверка заявок на лидерку Majestic RP за секунды, а не часы.">
+  <meta property="og:image" content="assets/shots/01-load.jpg">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --acc: #8B7CF6;
+      --acc-2: #a99cf9;
+      --acc-soft: color-mix(in srgb, #8B7CF6 14%, #0E0F14);
+      --acc-ring: color-mix(in srgb, #8B7CF6 26%, transparent);
+      --bg: #0B0C10;
+      --bg-2: #0E0F14;
+      --card: #13141A;
+      --raised: #171821;
+      --line: #1F2129;
+      --line-2: #2A2C37;
+      --text: #E8E9EE;
+      --text-2: #A3A7B3;
+      --muted: #8E92A0;
+      --label: #6E7280;
+      --ok: #4ADE9B;
+      --info: #5BB8FF;
+      --warn: #FFB454;
+      --bad: #FF6B5E;
+      --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: 'JetBrains Mono', Consolas, monospace;
+      --wrap: 1160px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+    button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+    .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+    .mono { font-family: var(--mono); }
+
+    /* фон */
+    .glow { position: absolute; inset: 0 0 auto 0; height: 900px; pointer-events: none; overflow: hidden; z-index: 0; }
+    .glow::before { content: ''; position: absolute; left: 50%; top: -380px; width: 1200px; height: 800px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(139, 124, 246, 0.28), transparent 70%); }
+    .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%); }
+
+    /* навигация */
+    header.nav { position: sticky; top: 0; z-index: 50; background: rgba(11, 12, 16, 0.72); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .nav .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand img { width: 30px; height: 30px; border-radius: 8px; }
+    .nav-links { margin-left: auto; display: flex; gap: 6px; }
+    .nav-links a { padding: 8px 12px; border-radius: 9px; font-size: 14px; color: var(--text-2); transition: 120ms; }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { padding: 8px 14px !important; background: var(--acc); color: #0B0C10 !important; font-weight: 700; }
+    .nav-cta:hover { filter: brightness(1.08); background: var(--acc) !important; }
+
+    /* кнопки */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 22px; border-radius: 12px; font-weight: 700; font-size: 15px; transition: transform 140ms ease, filter 140ms ease, background 140ms ease, border-color 140ms ease; }
+    .btn:active { transform: scale(0.98); }
+    .btn svg { width: 18px; height: 18px; flex: none; }
+    .btn-primary { background: var(--acc); color: #0B0C10; box-shadow: 0 10px 30px -10px var(--acc); }
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn-ghost { border: 1px solid var(--line-2); background: rgba(255,255,255,0.02); }
+    .btn-ghost:hover { border-color: #3A3D4B; background: rgba(255,255,255,0.05); }
+
+    /* главный экран */
+    .hero { position: relative; padding: 76px 0 40px; text-align: center; }
+    .hero .wrap { position: relative; z-index: 1; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255,255,255,0.03); font-size: 13px; color: var(--text-2); }
+    .pill b { color: var(--acc-2); font-family: var(--mono); font-weight: 700; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(74, 222, 155, 0.18); }
+    h1 { font-size: clamp(36px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.035em; font-weight: 800; margin: 22px auto 18px; max-width: 900px; }
+    h1 .grad { background: linear-gradient(90deg, #c4b5fd, var(--acc) 55%, #7dd3fc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-2); max-width: 680px; margin: 0 auto; }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .hero-meta { margin-top: 14px; font-size: 13px; color: var(--label); }
+    .hero-shot { position: relative; margin: 56px auto 0; max-width: 1080px; border-radius: 16px; padding: 6px; background: linear-gradient(180deg, rgba(139,124,246,0.45), rgba(139,124,246,0.05) 60%); box-shadow: 0 40px 120px -30px rgba(139, 124, 246, 0.45), 0 30px 60px rgba(0,0,0,0.6); }
+    .hero-shot img, .hero-video { border-radius: 12px; width: 100%; height: auto; display: block; aspect-ratio: 1280 / 760; background: #0E0F14; }
+    .video-badge { position: absolute; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; background: rgba(11, 12, 16, 0.78); border: 1px solid var(--line-2); font-size: 12px; color: var(--text-2); backdrop-filter: blur(6px); }
+    .rec { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); animation: blink 1.6s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+
+    /* что нового */
+    .news { max-width: 820px; margin: 40px auto 0; display: grid; gap: 12px; }
+    .rel { padding: 20px 22px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+    .rel.latest { border-color: color-mix(in srgb, var(--acc) 50%, var(--line)); background: linear-gradient(135deg, rgba(139,124,246,0.10), var(--card) 60%); }
+    .rel-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .rel-tag { font-family: var(--mono); font-weight: 700; font-size: 17px; color: var(--acc-2); }
+    .rel-badge { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: rgba(74, 222, 155, 0.12); color: var(--ok); border: 1px solid rgba(74, 222, 155, 0.3); }
+    .rel-date { margin-left: auto; font-size: 13px; color: var(--label); }
+    .rel ul { margin: 10px 0 0 18px; color: var(--text-2); font-size: 14.5px; display: grid; gap: 4px; }
+    .rel p { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    .news-more { text-align: center; margin-top: 16px; }
+    .news-more a { color: var(--acc-2); font-size: 14px; font-weight: 600; }
+    .news-more a:hover { text-decoration: underline; }
+
+    /* цифры */
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 54px auto 0; max-width: 960px; }
+    .stat { padding: 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); text-align: center; }
+    .stat-num { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--acc-2); }
+    .stat-lbl { font-size: 13px; color: var(--muted); }
+
+    /* секции */
+    section { position: relative; padding: 90px 0; }
+    .overline { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--acc); }
+    h2 { font-size: clamp(28px, 4vw, 42px); line-height: 1.12; letter-spacing: -0.03em; font-weight: 800; margin: 10px 0 12px; }
+    .sub { color: var(--text-2); max-width: 640px; }
+    .center { text-align: center; }
+    .center .sub { margin: 0 auto; }
+
+    /* возможности */
+    .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 42px; }
+    .feat { padding: 24px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); transition: border-color 160ms ease, transform 160ms ease; }
+    .feat:hover { border-color: color-mix(in srgb, var(--acc) 45%, var(--line)); transform: translateY(-2px); }
+    .feat-ico { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--acc-soft); border: 1px solid var(--acc-ring); color: var(--acc-2); margin-bottom: 16px; }
+    .feat-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feat h3 { font-size: 18px; letter-spacing: -0.01em; margin-bottom: 6px; }
+    .feat p { font-size: 14.5px; color: var(--text-2); }
+    .feat.wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+    .feat.wide img { border-radius: 10px; border: 1px solid var(--line-2); }
+
+    /* скриншоты */
+    .gallery { margin-top: 40px; }
+    .tabs { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+    .tab { padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--text-2); border: 1px solid transparent; }
+    .tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .tab.active { color: var(--text); background: var(--acc-soft); border-color: var(--acc-ring); }
+    .viewer { position: relative; border-radius: 16px; padding: 6px; background: linear-gradient(180deg, var(--line-2), transparent); }
+    .viewer img { width: 100%; border-radius: 12px; cursor: zoom-in; transition: opacity 200ms ease; }
+    .caption { text-align: center; color: var(--muted); font-size: 14px; margin-top: 14px; min-height: 22px; }
+
+    /* гиды */
+    .guides { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .guide-row { display: flex; justify-content: center; align-items: flex-end; gap: 6px; padding: 28px 18px 0; border-radius: 18px; background: radial-gradient(120% 90% at 50% 100%, rgba(139,124,246,0.25), var(--card) 70%); border: 1px solid var(--line); overflow: hidden; }
+    .guide-row img { width: 19%; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.5)); animation: float 4s ease-in-out infinite; }
+    .guide-row img:nth-child(2) { animation-delay: -0.8s; }
+    .guide-row img:nth-child(3) { animation-delay: -1.6s; width: 23%; }
+    .guide-row img:nth-child(4) { animation-delay: -2.4s; }
+    .guide-row img:nth-child(5) { animation-delay: -3.2s; }
+    @keyframes float { 50% { transform: translateY(-8px); } }
+    .checks { list-style: none; margin-top: 22px; display: grid; gap: 12px; }
+    .checks li { display: flex; gap: 12px; color: var(--text-2); }
+    .checks li::before { content: ''; flex: none; width: 22px; height: 22px; margin-top: 1px; border-radius: 7px; background: var(--acc-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a99cf9' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 13px no-repeat; border: 1px solid var(--acc-ring); }
+    .checks b { color: var(--text); font-weight: 600; }
+
+    /* доступ */
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 40px; counter-reset: s; }
+    .step { position: relative; padding: 26px 22px 22px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+    .step::before { counter-increment: s; content: counter(s); position: absolute; top: -14px; left: 22px; width: 30px; height: 30px; border-radius: 9px; background: var(--acc); color: #0B0C10; font-weight: 800; font-family: var(--mono); display: flex; align-items: center; justify-content: center; }
+    .step h3 { font-size: 17px; margin-bottom: 6px; }
+    .step p { font-size: 14.5px; color: var(--text-2); }
+    .contact { margin-top: 26px; display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 22px; border-radius: 16px; background: linear-gradient(90deg, rgba(88, 101, 242, 0.16), rgba(139,124,246,0.10)); border: 1px solid rgba(88, 101, 242, 0.35); }
+    .contact-txt { color: var(--text-2); }
+    .contact-txt b { color: var(--text); }
+    .ds { display: inline-flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: 12px; background: #5865F2; color: #fff; font-weight: 700; }
+    .ds:hover { filter: brightness(1.08); }
+    .ds svg { width: 20px; height: 20px; fill: currentColor; }
+    .ds .mono { background: rgba(0,0,0,0.18); padding: 2px 8px; border-radius: 7px; font-size: 14px; }
+
+    /* FAQ */
+    .faq { max-width: 820px; margin: 40px auto 0; display: grid; gap: 10px; }
+    details { border-radius: 14px; background: var(--card); border: 1px solid var(--line); transition: border-color 140ms ease; }
+    details[open] { border-color: var(--line-2); }
+    summary { list-style: none; cursor: pointer; padding: 18px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; margin-left: auto; font-family: var(--mono); font-size: 20px; color: var(--acc-2); transition: transform 160ms ease; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { padding: 0 20px 18px; color: var(--text-2); font-size: 15px; }
+
+    /* финал */
+    .final { text-align: center; padding: 70px 24px; border-radius: 22px; background: radial-gradient(120% 140% at 50% 0%, rgba(139,124,246,0.28), var(--card) 65%); border: 1px solid var(--line-2); }
+    footer { padding: 40px 0 50px; color: var(--label); font-size: 13px; }
+    footer .wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    footer a:hover { color: var(--text); }
+    footer .sp { margin-left: auto; }
+
+    /* просмотр скриншота */
+    .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(5, 6, 10, 0.88); display: none; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-height: 92vh; border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+    .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; padding: 12px 18px; border-radius: 12px; background: var(--card); border: 1px solid var(--acc); font-size: 14px; transition: 220ms ease; z-index: 120; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* появление при прокрутке */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 600ms ease, transform 600ms cubic-bezier(.2, .8, .2, 1); }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .guide-row img { animation: none; } }
+
+    @media (max-width: 900px) {
+      .features { grid-template-columns: 1fr 1fr; }
+      .feat.wide { grid-column: span 2; grid-template-columns: 1fr; }
+      .guides { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+    @media (max-width: 620px) {
+      .wrap { padding: 0 16px; }
+      section { padding: 64px 0; }
+      .features, .steps { grid-template-columns: 1fr; }
+      .feat.wide { grid-column: auto; }
+      .hero { padding-top: 52px; }
+      .btn { width: 100%; }
+      .contact { flex-direction: column; text-align: center; }
+      footer .sp { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="assets/logo.png" alt=""><span>Forum Checker</span></a>
+      <nav class="nav-links">
+        <a href="#features">Возможности</a>
+        <a href="#screens">Скриншоты</a>
+        <a href="#access">Доступ</a>
+        <a href="#news">Обновления</a>
+        <a href="#faq">Вопросы</a>
+        <a class="nav-cta js-download" href="https://github.com/Mihacloude228/forum-checker/releases/latest">Скачать</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ── ГЛАВНЫЙ ЭКРАН ── -->
+    <div class="hero">
+      <div class="glow"><div class="grid-bg"></div></div>
+      <div class="wrap">
+        <span class="pill"><span class="dot"></span>Majestic RP · заявки на лидерку · <b class="js-version">v3.3.0</b></span>
+        <h1>Проверка заявок<br><span class="grad">за секунды, а не часы</span></h1>
+        <p class="lead">Forum Checker сам загружает тему с заявками, проверяет каждую по вашему шаблону, отсеивает ЧС лидеров и считает реальный онлайн кандидатов.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary js-download" href="https://github.com/Mihacloude228/forum-checker/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Скачать <span class="js-version">v3.3.0</span>
+          </a>
+          <a class="btn btn-ghost" href="#access">Как получить доступ</a>
+        </div>
+        <div class="hero-meta">Windows 10 / 11 · одна программа, без установки · обновления бесплатно</div>
+        <div class="hero-shot reveal">
+          <video class="hero-video" poster="assets/demo-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Демо: загрузка темы, проверка заявок и онлайн кандидатов">
+            <source src="assets/demo.mp4" type="video/mp4">
+            <source src="assets/demo.webm" type="video/webm">
+          </video>
+          <span class="video-badge"><span class="rec"></span>демо · 1 мин</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat reveal"><div class="stat-num">1 клик</div><div class="stat-lbl">вся тема с заявками</div></div>
+          <div class="stat reveal"><div class="stat-num">&lt; 1 сек</div><div class="stat-lbl">проверка по шаблону</div></div>
+          <div class="stat reveal"><div class="stat-num">2 мес.</div><div class="stat-lbl">история онлайна</div></div>
+          <div class="stat reveal"><div class="stat-num">5</div><div class="stat-lbl">интерактивных гидов</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ВОЗМОЖНОСТИ ── -->
+    <section id="features">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">ВОЗМОЖНОСТИ</div>
+          <h2>Всё, что раньше делалось руками</h2>
+          <p class="sub">От ссылки на тему до готового списка для обзвона - в одном окне.</p>
+        </div>
+        <div class="features">
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+            <h3>Вся тема за раз</h3>
+            <p>Вставьте ссылку - программа сама пройдёт все страницы темы с заявками. Можно догружать новые страницы по одной.</p>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+            <h3>Проверка по шаблону</h3>
+            <p>Возраст, Static ID, Discord, обязательные пункты, запрещённые слова - настраиваете свои правила или берёте готовый пресет.</p>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+            <h3>ЧС лидеров</h3>
+            <p>Своя база чёрного списка. Совпадения по статику или Discord отсеиваются автоматически и попадают в отдельный список.</p>
+          </div>
+          <div class="feat wide reveal">
+            <div>
+              <div class="feat-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <h3>Реальный онлайн кандидатов</h3>
+              <p>Программа сама соберёт время в игре каждого одобренного кандидата - за день, неделю, месяц и два месяца - и покажет, кто играет прямо сейчас.</p>
+            </div>
+            <img src="assets/shots/08-rail.jpg" alt="Вкладка проверки онлайна" loading="lazy">
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
+            <h3>Экспорт для Discord</h3>
+            <p>Пинги одобренных, таблица кандидатов, список отказов с причинами и статистика онлайна - копируются одной кнопкой.</p>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <h3>Пачкой и вручную</h3>
+            <p>Отметьте нескольких кандидатов и одобрите или отклоните разом. Ошиблись - «Отменить» в один клик.</p>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+            <h3>Под себя</h3>
+            <p>Нижний док или боковое меню, плотность карточек, колонки, масштаб под ваш экран, звуки - всё в настройках.</p>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-ico"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+            <h3>Обновления сами</h3>
+            <p>Программа сама сообщит о новой версии и откроет страницу загрузки. Ключ и настройки сохраняются.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── СКРИНШОТЫ ── -->
+    <section id="screens">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">СКРИНШОТЫ</div>
+          <h2>Тихий тёмный интерфейс</h2>
+          <p class="sub">Ничего лишнего - только то, что нужно для проверки.</p>
+        </div>
+        <div class="gallery reveal">
+          <div class="tabs" id="tabs"></div>
+          <div class="viewer"><img id="viewerImg" src="assets/shots/01-load.jpg" alt=""></div>
+          <div class="caption" id="caption"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ГИДЫ ── -->
+    <section>
+      <div class="wrap guides">
+        <div class="reveal">
+          <div class="overline">ИНТЕРАКТИВНЫЕ ГИДЫ</div>
+          <h2>Помощник, который не даст заскучать</h2>
+          <p class="sub">В программе живут персонажи-помощники. Они проведут по всем функциям, подскажут, что делать дальше, и прокомментируют вашу работу - каждый в своём стиле.</p>
+          <ul class="checks">
+            <li><span><b>Обучение с подсветкой</b> - гид показывает каждую кнопку прямо в интерфейсе.</span></li>
+            <li><span><b>Выбор гида</b> - несколько персонажей с разными характерами.</span></li>
+            <li><span><b>Кастомизация</b> - болтливость, свои фразы, «гид дня» при каждом запуске.</span></li>
+            <li><span><b>Подсказки по делу</b> - гид объяснит пустой экран и предложит следующий шаг.</span></li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <div class="guide-row">
+            <img src="assets/guides/g2.png" alt="">
+            <img src="assets/guides/g4.png" alt="">
+            <img src="assets/guides/g1.png" alt="">
+            <img src="assets/guides/g3.png" alt="">
+            <img src="assets/guides/g5.png" alt="">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ДОСТУП ── -->
+    <section id="access">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">ДОСТУП</div>
+          <h2>Как начать пользоваться</h2>
+          <p class="sub">Доступ выдаётся по персональному ключу, привязанному к вашему компьютеру.</p>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><h3>Скачайте</h3><p>Загрузите последнюю версию и запустите - установка не нужна.</p></div>
+          <div class="step reveal"><h3>Скопируйте код ПК</h3><p>При первом запуске откроется окно активации с кодом вида <span class="mono">FC-PC-XXXX-XXXX-XXXX</span>.</p></div>
+          <div class="step reveal"><h3>Получите ключ</h3><p>Отправьте код в Discord - в ответ придёт ключ. Вставьте его, и программа откроется.</p></div>
+        </div>
+        <div class="contact reveal">
+          <span class="contact-txt"><b>Ключ и вопросы</b> - пишите в Discord:</span>
+          <button class="ds" id="dsBtn" title="Скопировать ник">
+            <svg viewBox="0 0 24 24"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.25a18.27 18.27 0 0 0-5.49 0 12.6 12.6 0 0 0-.62-1.25.08.08 0 0 0-.08-.04 19.74 19.74 0 0 0-4.89 1.52.07.07 0 0 0-.03.03C.53 9.05-.32 13.58.1 18.06a.08.08 0 0 0 .03.06 19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-1.99a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1-.01-.13l.37-.29a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08 0l.37.3a.08.08 0 0 1-.01.13 12.3 12.3 0 0 1-1.87.89.08.08 0 0 0-.04.11c.36.7.78 1.36 1.23 1.99a.08.08 0 0 0 .08.03 19.84 19.84 0 0 0 6-3.03.08.08 0 0 0 .03-.06c.5-5.18-.84-9.67-3.55-13.66a.06.06 0 0 0-.03-.03ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.96-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.96 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Z"/></svg>
+            <span class="mono">_pinqx</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ЧТО НОВОГО (подтягивается из релизов GitHub) ── -->
+    <section id="news">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">ОБНОВЛЕНИЯ</div>
+          <h2>Что нового</h2>
+          <p class="sub">Программа постоянно развивается - последние обновления.</p>
+        </div>
+        <div class="news" id="newsList">
+          <div class="rel"><div class="rel-head"><span class="rel-tag js-version">v3.3.0</span><span class="rel-badge">последняя</span></div><p>Загружаем список изменений…</p></div>
+        </div>
+        <div class="news-more"><a href="https://github.com/Mihacloude228/forum-checker/releases">Все версии на GitHub →</a></div>
+      </div>
+    </section>
+
+    <!-- ── ВОПРОСЫ ── -->
+    <section id="faq">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">ВОПРОСЫ</div>
+          <h2>Частые вопросы</h2>
+        </div>
+        <div class="faq">
+          <details class="reveal"><summary>Это безопасно? Куда уходят мои пароли?</summary>
+            <p>Никуда. Вход на форум и в админ-панель выполняется во встроенном окне браузера на вашем компьютере, сессия хранится только у вас. Программа не отправляет пароли, куки и списки кандидатов на сторонние серверы.</p></details>
+          <details class="reveal"><summary>Что нужно для работы?</summary>
+            <p>Windows 10 или 11 и аккаунт на форуме. Для проверки онлайна - доступ к админ-панели. Компонент Microsoft WebView2 уже есть в Windows 11; на Windows 10 он ставится автоматически вместе с Edge.</p></details>
+          <details class="reveal"><summary>Windows пишет «Система Windows защитила ваш компьютер». Что делать?</summary>
+            <p>Так Windows реагирует на программы без платной цифровой подписи. Нажмите «Подробнее» → «Выполнить в любом случае». Скачивайте программу только с этой страницы.</p></details>
+          <details class="reveal"><summary>Как получить ключ?</summary>
+            <p>Запустите программу, скопируйте код ПК из окна активации и отправьте его в Discord <span class="mono">_pinqx</span>. Ключ работает только на том компьютере, для которого выдан.</p></details>
+          <details class="reveal"><summary>Я сменил компьютер или переустановил Windows</summary>
+            <p>Код ПК привязан к компьютеру. Если он поменялся - запустите программу, скопируйте новый код и напишите в Discord, ключ перевыпустят.</p></details>
+          <details class="reveal"><summary>Как обновляться?</summary>
+            <p>Программа сама сообщит о новой версии и откроет страницу загрузки. Ключ при обновлении вводить заново не нужно - просто запустите новую версию.</p></details>
+          <details class="reveal"><summary>Можно ли настроить проверку под свою фракцию?</summary>
+            <p>Да. Поля и условия проверки задаются под ваш шаблон заявки: можно составить свои правила, вытащить поля из первого поста темы автоматически или выбрать готовый пресет.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="final reveal">
+          <div class="overline">ГОТОВО К РАБОТЕ</div>
+          <h2>Хватит листать заявки вручную</h2>
+          <p class="sub" style="margin: 0 auto 26px;">Скачайте Forum Checker и получите ключ в Discord.</p>
+          <a class="btn btn-primary js-download" href="https://github.com/Mihacloude228/forum-checker/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Скачать <span class="js-version">v3.3.0</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="year">2026</span> Forum Checker · byhero</span>
+      <span class="sp"><a href="https://github.com/Mihacloude228/forum-checker/releases">История версий</a></span>
+      <span>Не является официальным продуктом Majestic RP</span>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Скриншоты
+    const SHOTS = [
+      { tab: 'Загрузка', src: 'assets/shots/01-load.jpg', text: 'Ссылка на тему - и все страницы с заявками загружены.' },
+      { tab: 'Фильтры', src: 'assets/shots/02-filters.jpg', text: 'Свои правила проверки: что считывать из заявки и какие условия проверять.' },
+      { tab: 'Шаблон', src: 'assets/shots/03-template.jpg', text: 'Шаблон заявки берётся из первого поста, поля создаются автоматически.' },
+      { tab: 'Обучение', src: 'assets/shots/07-tutorial.jpg', text: 'Интерактивное обучение: гид подсвечивает и объясняет каждую функцию.' },
+      { tab: 'Подсказки', src: 'assets/shots/04-guide-empty.jpg', text: 'Пустой экран? Гид подскажет, что сделать дальше.' },
+      { tab: 'Онлайн', src: 'assets/shots/08-rail.jpg', text: 'Проверка онлайна и альтернативный вид меню - боковая панель.' },
+      { tab: 'Настройки', src: 'assets/shots/05-settings.jpg', text: 'Вид меню, плотность списков, масштаб и звуки - под себя.' }
+    ];
+    const tabs = document.getElementById('tabs');
+    const img = document.getElementById('viewerImg');
+    const cap = document.getElementById('caption');
+    SHOTS.forEach((s, i) => {
+      const b = document.createElement('button');
+      b.className = 'tab' + (i === 0 ? ' active' : '');
+      b.textContent = s.tab;
+      b.onclick = () => showShot(i);
+      tabs.appendChild(b);
+      new Image().src = s.src;
+    });
+    let cur = 0;
+    function showShot(i) {
+      cur = i;
+      [...tabs.children].forEach((b, j) => b.classList.toggle('active', j === i));
+      img.style.opacity = 0;
+      setTimeout(() => { img.src = SHOTS[i].src; img.alt = SHOTS[i].text; cap.textContent = SHOTS[i].text; img.style.opacity = 1; }, 160);
+    }
+    cap.textContent = SHOTS[0].text;
+
+    // Увеличение скриншотов
+    const lb = document.getElementById('lightbox');
+    document.querySelectorAll('.viewer img, .hero-shot img, .feat.wide img').forEach(el => el.addEventListener('click', () => {
+      document.getElementById('lightboxImg').src = el.src;
+      lb.classList.add('open');
+    }));
+    lb.onclick = () => lb.classList.remove('open');
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') lb.classList.remove('open');
+      if (e.key === 'ArrowRight' && !lb.classList.contains('open')) showShot((cur + 1) % SHOTS.length);
+      if (e.key === 'ArrowLeft' && !lb.classList.contains('open')) showShot((cur - 1 + SHOTS.length) % SHOTS.length);
+    });
+
+    // Discord: копирование ника
+    function toast(t) {
+      const el = document.getElementById('toast');
+      el.textContent = t; el.classList.add('show');
+      clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+    document.getElementById('dsBtn').onclick = async () => {
+      try { await navigator.clipboard.writeText('_pinqx'); toast('Ник _pinqx скопирован - добавьте его в друзья в Discord'); }
+      catch (e) { toast('Ник в Discord: _pinqx'); }
+    };
+
+    // Релизы GitHub: последняя версия, прямая ссылка на exe и блок «Что нового»
+    function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+    function relBody(body) {
+      const lines = String(body || '').split(/\r?\n/).map(l => l.trim()).filter(l => l && !/^#+\s|^forum checker v/i.test(l));
+      const items = lines.filter(l => /^[-*•]\s+/.test(l)).map(l => l.replace(/^[-*•]\s+/, '').replace(/\*\*/g, ''));
+      if (items.length) return '<ul>' + items.slice(0, 8).map(i => `<li>${esc(i)}</li>`).join('') + '</ul>';
+      if (lines.length) return `<p>${esc(lines.slice(0, 3).join(' '))}</p>`;
+      return '<p>Улучшения и исправления.</p>';
+    }
+    fetch('https://api.github.com/repos/Mihacloude228/forum-checker/releases?per_page=6')
+      .then(r => r.ok ? r.json() : null)
+      .then(list => {
+        const rels = (list || []).filter(r => !r.draft && !r.prerelease);
+        if (!rels.length) return;
+        const rel = rels[0];
+        document.querySelectorAll('.js-version').forEach(el => el.textContent = rel.tag_name);
+        const exe = (rel.assets || []).find(a => /\.exe$/i.test(a.name));
+        if (exe) document.querySelectorAll('.js-download').forEach(a => a.href = exe.browser_download_url);
+        document.getElementById('newsList').innerHTML = rels.slice(0, 3).map((r, i) => `
+          <div class="rel ${i === 0 ? 'latest' : ''}">
+            <div class="rel-head">
+              <span class="rel-tag">${esc(r.tag_name)}</span>
+              ${i === 0 ? '<span class="rel-badge">последняя</span>' : ''}
+              <span class="rel-date">${new Date(r.published_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            </div>
+            ${relBody(r.body)}
+          </div>`).join('');
+      })
+      .catch(() => {});
+
+    // Видео играет только когда его видно (экономит батарею и трафик)
+    const vid = document.querySelector('.hero-video');
+    if (vid && 'IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }), { threshold: 0.2 }).observe(vid);
+    }
+
+    // Появление блоков при прокрутке
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
