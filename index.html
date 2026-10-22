@@ -210,6 +210,31 @@
       .contact { flex-direction: column; text-align: center; }
       footer .sp { margin-left: 0; }
     }
+      /* живая демка */
+    .try-steps { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 26px auto 22px; padding: 0; }
+    .try-steps li { display: flex; align-items: center; gap: 9px; padding: 8px 14px 8px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--text-2); }
+    .try-steps b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--acc-soft); border: 1px solid var(--acc-ring); color: var(--acc-2); font: 700 12px/1 var(--mono); }
+    .try-frame { border-radius: 16px; overflow: hidden; border: 1px solid var(--line-2); background: #0E0F14; box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(139, 124, 246, 0.08); }
+    .try-bar { display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 14px; background: var(--card); border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+    .try-bar i { width: 10px; height: 10px; border-radius: 50%; background: #2A2C37; }
+    .try-bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; }
+    .try-bar a { margin-left: auto; color: var(--acc-2); font-weight: 600; }
+    .try-view { position: relative; width: 100%; aspect-ratio: 1280 / 800; overflow: hidden; background: radial-gradient(500px 300px at 50% 45%, rgba(139, 124, 246, 0.14), transparent 70%), #0E0F14; }
+    .try-view iframe { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; border: 0; transform-origin: 0 0; }
+    .try-start { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 0; background: none; color: var(--text); font: 700 20px/1.2 var(--sans); cursor: pointer; }
+    .try-start small { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .try-play { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: #0B0C10; box-shadow: 0 16px 40px -10px var(--acc); transition: transform 160ms cubic-bezier(.3, 1.6, .5, 1); }
+    .try-play svg { width: 30px; height: 30px; fill: currentColor; margin-left: 4px; }
+    .try-start:hover .try-play { transform: scale(1.07); }
+    .try-frame:fullscreen { border-radius: 0; display: flex; flex-direction: column; }
+    .try-frame:fullscreen .try-view { flex: 1; aspect-ratio: auto; }
+    .try-mobile { display: none; margin-top: 14px; text-align: center; color: var(--muted); font-size: 14px; }
+    .try-mobile a { color: var(--acc-2); }
+    @media (max-width: 760px) {
+      .try-mobile { display: block; }
+      .try-bar a { display: none; }
+    }
+
   </style>
   <link rel="stylesheet" href="extras.css">
   <link rel="stylesheet" href="support.css">
@@ -221,6 +246,7 @@
       <a class="brand" href="#top"><img src="assets/logo.png" alt=""><span>Forum Checker</span></a>
       <nav class="nav-links">
         <a href="#features">Возможности</a>
+        <a href="#try">Попробовать</a>
         <a href="#screens">Скриншоты</a>
         <a href="#access">Доступ</a>
         <a href="#news">Обновления</a>
@@ -235,13 +261,13 @@
     <div class="hero">
       <div class="glow"><div class="grid-bg"></div></div>
       <div class="wrap">
-        <span class="pill"><span class="dot"></span>Majestic RP · заявки на лидерку · <b class="js-version">v3.4.0</b></span>
+        <span class="pill"><span class="dot"></span>Majestic RP · заявки на лидерку · <b class="js-version">v3.5.0</b></span>
         <h1>Проверка заявок<br><span class="grad">за секунды, а не часы</span></h1>
         <p class="lead">Forum Checker сам загружает тему с заявками, проверяет каждую по вашему шаблону, отсеивает ЧС лидеров и считает реальный онлайн кандидатов.</p>
         <div class="hero-cta">
           <a class="btn btn-primary js-download" href="https://github.com/Mihacloude228/forum-checker/releases/latest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Скачать <span class="js-version">v3.4.0</span>
+            Скачать <span class="js-version">v3.5.0</span>
           </a>
           <a class="btn btn-ghost" href="#access">Как получить доступ</a>
         </div>
@@ -264,6 +290,33 @@
     </div>
 
     <!-- ── ВОЗМОЖНОСТИ ── -->
+    <section id="try">
+      <div class="wrap">
+        <div class="center reveal">
+          <div class="overline">ЖИВАЯ ДЕМКА</div>
+          <h2>Попробуйте прямо здесь</h2>
+          <p class="sub">Это настоящий интерфейс программы на выдуманных данных. Ссылка на тему уже вставлена, входить никуда не нужно: жмите кнопки и смотрите, как Forum Checker разбирает заявки.</p>
+        </div>
+        <ol class="try-steps reveal">
+          <li><b>1</b>Загрузка → «Загрузить ВСЕ»</li>
+          <li><b>2</b>«Проверить все заявки»</li>
+          <li><b>3</b>Смотрите «Подошли» и «Не подошли»</li>
+          <li><b>4</b>Онлайн → «Запустить проверку»</li>
+        </ol>
+        <div class="try-frame reveal" id="tryFrame">
+          <div class="try-bar"><i></i><i></i><i></i><span>Forum Checker · демо</span><a href="demo/index.html" target="_blank" rel="noopener">Открыть на весь экран ↗</a></div>
+          <div class="try-view" id="tryView">
+            <button class="try-start" id="tryStart" type="button">
+              <span class="try-play"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>
+              <span>Запустить демо</span>
+              <small>Всё работает в браузере, никакие данные никуда не отправляются</small>
+            </button>
+          </div>
+        </div>
+        <p class="try-mobile">Демо рассчитано на экран компьютера. На телефоне его можно <a href="demo/index.html" target="_blank" rel="noopener">открыть отдельно</a>, но удобнее посмотреть с ПК.</p>
+      </div>
+    </section>
+
     <section id="features">
       <div class="wrap">
         <div class="center reveal">
@@ -393,7 +446,7 @@
           <p class="sub">Программа постоянно развивается - последние обновления.</p>
         </div>
         <div class="news" id="newsList">
-          <div class="rel"><div class="rel-head"><span class="rel-tag js-version">v3.4.0</span><span class="rel-badge">последняя</span></div><p>Загружаем список изменений…</p></div>
+          <div class="rel"><div class="rel-head"><span class="rel-tag js-version">v3.5.0</span><span class="rel-badge">последняя</span></div><p>Загружаем список изменений…</p></div>
         </div>
         <div class="news-more"><a href="https://github.com/Mihacloude228/forum-checker/releases">Все версии на GitHub →</a></div>
       </div>
@@ -433,7 +486,7 @@
           <p class="sub" style="margin: 0 auto 26px;">Скачайте Forum Checker и получите ключ в Discord.</p>
           <a class="btn btn-primary js-download" href="https://github.com/Mihacloude228/forum-checker/releases/latest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Скачать <span class="js-version">v3.4.0</span>
+            Скачать <span class="js-version">v3.5.0</span>
           </a>
         </div>
       </div>
@@ -550,5 +603,47 @@
   <script src="sfx.js"></script>
   <script src="extras.js"></script>
   <script src="support.js"></script>
+<script>
+    // Живая демка: окно программы 1280×800 вписывается в блок; крестик и «свернуть» в демке закрывают её
+    (() => {
+      const box = document.getElementById('tryFrame'), view = document.getElementById('tryView');
+      if (!view) return;
+      const startHtml = view.innerHTML;
+      let frame = null;
+      const fit = () => {
+        if (!frame) return;
+        const k = Math.min(view.clientWidth / 1280, view.clientHeight / 800);
+        frame.style.transform = `scale(${k})`;
+        frame.style.left = ((view.clientWidth - 1280 * k) / 2) + 'px';
+        frame.style.top = ((view.clientHeight - 800 * k) / 2) + 'px';
+      };
+      const start = () => {
+        frame = document.createElement('iframe');
+        frame.src = 'demo/index.html';
+        frame.title = 'Живая демка Forum Checker';
+        view.innerHTML = '';
+        view.appendChild(frame);
+        fit();
+      };
+      const stop = () => {
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        frame = null;
+        view.innerHTML = startHtml;
+        view.querySelector('#tryStart').addEventListener('click', start);
+      };
+      view.querySelector('#tryStart').addEventListener('click', start);
+      addEventListener('message', (e) => {
+        if (!frame || e.source !== frame.contentWindow || !e.data) return;
+        if (e.data.fcDemo === 'close') stop();
+        if (e.data.fcDemo === 'fullscreen') {
+          if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+          else if (box.requestFullscreen) box.requestFullscreen().catch(() => {});
+        }
+      });
+      addEventListener('resize', fit);
+      document.addEventListener('fullscreenchange', () => setTimeout(fit, 50));
+    })();
+
+</script>
 </body>
 </html>

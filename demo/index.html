@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum Checker - демо</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="demo-ui.css">
+</head>
+<body class="layout-dock">
+
+  <!-- ── НАВИГАЦИЯ: нижний док (по умолчанию) или боковая рейка (Настройки → Основные) ── -->
+  <aside class="sidebar app-nav" id="appNav">
+    <div class="nav-logo" title="Forum Checker v3.5.0 · byhero">
+      <svg class="fc-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 16H33V26.5A5.5 5.5 0 0 1 33 37.5V48H13A5 5 0 0 1 8 43V21A5 5 0 0 1 13 16Z" fill="#8B7CF6"></path><path d="M17 24V40M17 24H25M17 32H23.5" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M35 16H51A5 5 0 0 1 56 21V43A5 5 0 0 1 51 48H35V38.6A6.6 6.6 0 0 0 35 25.4Z" fill="#E8E9EE"></path><path d="M51 27.2A6.6 6.6 0 1 0 51 36.8" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round"></path></svg>
+    </div>
+
+    <div class="nav-item active" data-tab="auth">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"></path><path class="a" d="M4 12h10M10 8l4 4-4 4"></path></svg>
+      <span class="nav-tip"><span class="nav-label">Авторизация</span><span class="nav-sub">Форум Majestic RP · Alt+1</span></span>
+    </div>
+    <div class="nav-item" data-tab="load">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path class="a" d="M12 4v10M8 10l4 4 4-4"></path><path d="M5 20h14"></path></svg>
+      <span class="nav-tip"><span class="nav-label">Загрузка</span><span class="nav-sub">Тема заявок · Alt+2</span></span>
+    </div>
+    <div class="nav-item" data-tab="tmpl">
+      <svg class="nav-svg" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="4"></rect><path class="a" d="M9 9h6M9 13h6M9 17h3"></path></svg>
+      <span class="nav-tip"><span class="nav-label">Шаблон</span><span class="nav-sub">Форма заявки · Alt+3</span></span>
+    </div>
+    <div class="nav-item" data-tab="fields">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 7h16"></path><path class="a" d="M7 12h10"></path><path d="M10 17h4"></path></svg>
+      <span class="nav-tip"><span class="nav-label">Фильтры</span><span class="nav-sub">Критерии отбора · Alt+4</span></span>
+    </div>
+
+    <span class="nav-sep"></span>
+
+    <div class="nav-item nav-passed" data-tab="passed">
+      <svg class="nav-svg" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="6"></rect><path class="a" d="M8 12.5l3 3 5-6"></path></svg>
+      <span class="nav-badge badge-ok" id="badgePassed">0</span>
+      <span class="nav-tip"><span class="nav-label">Подошли</span><span class="nav-sub">Одобренные заявки · Alt+5</span></span>
+    </div>
+    <div class="nav-item nav-failed" data-tab="failed">
+      <svg class="nav-svg" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="6"></rect><path class="a" d="M9.2 9.2l5.6 5.6M14.8 9.2l-5.6 5.6"></path></svg>
+      <span class="nav-badge badge-bad" id="badgeFailed">0</span>
+      <span class="nav-tip"><span class="nav-label">Не подошли</span><span class="nav-sub">Отсеянные заявки · Alt+6</span></span>
+    </div>
+    <div class="nav-item nav-online" data-tab="online">
+      <svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path class="a" d="M12 7.5V12l3 2"></path></svg>
+      <span class="nav-badge badge-info" id="badgeOnline">0</span>
+      <span class="nav-tip"><span class="nav-label">Онлайн</span><span class="nav-sub">Проверка активности · Alt+7</span></span>
+    </div>
+
+    <span class="nav-sep nav-sep-end"></span>
+
+    <div class="nav-item nav-settings" data-tab="settings">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"></path><circle class="a" cx="12" cy="12" r="3.6"></circle></svg>
+      <span class="nav-tip"><span class="nav-label">Настройки</span><span class="nav-sub">Конфигурация и ЧС · Alt+8</span></span>
+    </div>
+    <div class="nav-search" id="navSearchBtn" onclick="openNavPalette()">
+      <svg class="nav-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path class="a" d="M16 16l4.5 4.5"></path></svg>
+      <span class="nav-tip"><span class="nav-label">Поиск раздела</span><span class="nav-sub">Ctrl+E</span></span>
+    </div>
+  </aside>
+
+  <!-- ── ГИД (левый нижний угол) ── -->
+  <div class="guide-dock" id="guideDock">
+    <!-- Floating Speech Bubble -->
+    <div class="mascot-bubble" id="mascotBubble">
+      <div class="mascot-bubble-hdr">
+        <span id="bubbleSpeaker">💬 hero:</span>
+        <span class="mascot-bubble-close" onclick="closeMascotBubble()">✕</span>
+      </div>
+      <div class="mascot-bubble-text" id="bubbleText">Привет! Я помогу тебе быстро проверить заявки на лидерку.</div>
+      <div class="bubble-replies" id="bubbleReplies"></div>
+    </div>
+
+    <!-- Mascot Card -->
+    <div class="mascot-card" id="mascotCard" onclick="toggleMascotMenu()">
+      <img src="assets/mascot_idle.png" class="mascot-avatar" id="mascotImg" alt="Mascot">
+      <div class="mascot-info">
+        <div class="mascot-name" id="mascotName">hero • Факты</div>
+        <div class="mascot-hint">Нажми - обучение и инфо 👉</div>
+      </div>
+    </div>
+    <!-- Версия билда под гидом (видна в режиме боковой рейки) -->
+    <div class="rail-build" id="railBuildVersion">v3.5.0</div>
+
+    <!-- Mascot Menu Popup -->
+    <div class="mascot-menu" id="mascotMenu">
+      <div class="mascot-menu-top">
+        <span id="mascotMenuGreeting">💬 Привет, я hero!</span>
+        <span class="mascot-bubble-close" onclick="closeMascotMenu()">✕</span>
+      </div>
+      <div class="mascot-menu-body">
+        <div class="mascot-menu-sub" id="mascotMenuSub">Готов разнести рутину в щепки?</div>
+        <button class="menu-btn menu-btn-primary" onclick="startTutorial()">🎓 Запустить обучение с гидом</button>
+        <button class="menu-btn menu-btn-secondary" onclick="openGuideSettings()">🎭 Сменить гида / Настройки гидов</button>
+        <button class="menu-btn menu-btn-dark" onclick="showDisclaimer(false)">⚠️ Показать дисклеймер</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ПАЛИТРА РАЗДЕЛОВ (Ctrl+E) ── -->
+  <div class="nav-palette-bg" id="navPaletteBg">
+    <div class="nav-palette">
+      <input type="text" id="navPaletteInput" placeholder="Куда перейти? Например: фильтры, онлайн, чс..." autocomplete="off">
+      <div class="nav-palette-list" id="navPaletteList"></div>
+      <div class="nav-palette-foot">↑↓ выбрать · Enter перейти · Esc закрыть · Alt+1…8 быстрый переход</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN AREA ── -->
+  <main class="main-area">
+    <header class="main-header">
+      <div class="header-brand" title="Forum Checker v3.5.0 · byhero">
+        <div class="sidebar-logo-box">
+      <svg class="fc-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 16H33V26.5A5.5 5.5 0 0 1 33 37.5V48H13A5 5 0 0 1 8 43V21A5 5 0 0 1 13 16Z" fill="#8B7CF6"></path><path d="M17 24V40M17 24H25M17 32H23.5" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M35 16H51A5 5 0 0 1 56 21V43A5 5 0 0 1 51 48H35V38.6A6.6 6.6 0 0 0 35 25.4Z" fill="#E8E9EE"></path><path d="M51 27.2A6.6 6.6 0 1 0 51 36.8" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round"></path></svg>
+        </div>
+      </div>
+      <div class="header-left">
+        <div class="header-overline" id="headerOverline">ДОСТУП</div>
+        <div class="header-title" id="headerTitle">Авторизация на форуме</div>
+      </div>
+      <div class="header-right">
+        <!-- Статус и версия (раньше были в нижней строке) -->
+        <div class="header-meta">
+          <div class="header-status" id="statusBarText">Готово</div>
+          <div class="header-version" id="statusBarVersion" title="Версия Forum Checker">v3.5.0</div>
+        </div>
+        <!-- Кнопки окна (окно без системной рамки) -->
+        <div class="win-controls">
+          <button class="win-btn" title="Свернуть" onclick="winMinimize()">
+            <svg viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6"></line></svg>
+          </button>
+          <button class="win-btn" id="btnWinMax" title="Развернуть" onclick="winToggleMaximize()">
+            <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" rx="1"></rect></svg>
+          </button>
+          <button class="win-btn win-btn-close" title="Закрыть" onclick="winClose()">
+            <svg viewBox="0 0 12 12"><line x1="2.5" y1="2.5" x2="9.5" y2="9.5"></line><line x1="9.5" y1="2.5" x2="2.5" y2="9.5"></line></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-box">
+
+      <!-- ── TAB 1: AUTH ── -->
+      <section class="tab-pane active" id="pane-auth">
+        <div class="card">
+          <div class="card-title">Авторизация на форуме Majestic RP</div>
+          <div class="card-desc">Программа использует встроенное окно браузера с форумом (forum.majestic-rp.ru). Войдите в свой аккаунт - данные сохраняются автоматически и только на вашем компьютере.</div>
+          
+          <div class="subcard">
+            <span id="forumAuthIcon" style="font-size: 22px;">⏳</span>
+            <div style="font-weight: 700; color: #e2e8f0;" id="forumAuthText">Проверка авторизации на форуме...</div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" id="btnLoginForum" onclick="loginForum()">🌐 Войти на Форум</button>
+            <button class="btn btn-secondary" onclick="clearSession()">Очистить сессию</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 2: LOAD ── -->
+      <section class="tab-pane" id="pane-load">
+        <div class="card load-card">
+          <div class="card-title">Тема с заявками</div>
+          <div class="load-row">
+            <input type="text" class="input-text" id="forumUrl" placeholder="Вставьте ссылку на тему: https://forum.majestic-rp.ru/threads/...">
+            <button class="btn btn-primary" onclick="loadAllPages()">📥 Загрузить</button>
+            <button class="btn btn-danger" onclick="clearAllPosts()">🗑️ Очистить</button>
+          </div>
+          <div class="load-status">
+            <span id="loadProgText">Готово к загрузке</span>
+            <span class="load-stats"><span id="statPages">Загружено страниц: 0</span><span id="statPosts">Всего постов: 0</span></span>
+            <span id="loadProgPercent">0%</span>
+          </div>
+          <div class="load-bar"><div id="loadProgressBar"></div></div>
+          <input type="hidden" id="targetPageNum" value="2">
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-top: 10px;">
+          <button class="btn btn-cta" id="btnCheckAllApps" onclick="checkAllApplications()">🔍 ПРОВЕРИТЬ ВСЕ ЗАЯВКИ</button>
+        </div>
+      </section>
+
+      <!-- ── TAB 3: TEMPLATE ── -->
+      <section class="tab-pane" id="pane-tmpl">
+        <div class="card" style="flex: 1;">
+          <div class="card-title">Шаблон заявки</div>
+          <div class="card-desc">Текст первого поста (#1) с вопросами и пунктами шаблона. Доступен для редактирования.</div>
+          
+          <textarea class="textarea-tmpl" id="tmplText" placeholder="Вставьте сюда текст шаблона из темы форума..."></textarea>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" onclick="saveTemplate()">💾 Сохранить</button>
+            <button class="btn btn-secondary" onclick="extractTemplateFromPost1()">🔄 Из 1-го поста</button>
+            <button class="btn btn-secondary" id="btnAutoFields" onclick="autoFieldsFromTemplate()">📋 Авто-поля</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 4: FIELDS / RULES ── -->
+      <section class="tab-pane" id="pane-fields">
+        <div class="card" style="flex: 1;">
+          <div class="card-title">Поля и фильтры</div>
+          <div class="card-desc">Ключевое слово - текст вопроса, после которого считывается ответ кандидата. Фильтр - условие проверки ответа.</div>
+
+          <div style="display: flex; gap: 8px; justify-content: space-between;">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" id="btnAddRule" onclick="openAddRuleModal()">➕ Добавить</button>
+              <button class="btn btn-secondary" onclick="editSelectedRule()">✏️ Изменить</button>
+              <button class="btn btn-danger" onclick="deleteSelectedRule()">🗑️ Удалить</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-danger btn-clear" id="btnDeleteAllRules" onclick="deleteAllRules()" title="Удалить все фильтры">🗑️ Удалить все</button>
+              <button class="btn" style="background: #1e3a34; color: #34d399;" onclick="saveRulesConfig()">💾 Сохранить</button>
+            </div>
+          </div>
+
+          <div style="background: #1a162b; border: 1px solid #382d5e; border-radius: 8px; flex: 1; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="rulesTable">
+              <thead>
+                <tr style="background: #241d3d; color: #e9d5ff; text-align: left; height: 36px;">
+                  <th style="padding: 8px 12px;">Название</th>
+                  <th style="padding: 8px 12px;">Ключевое слово</th>
+                  <th style="padding: 8px 12px;">Фильтр</th>
+                  <th style="padding: 8px 12px;">Параметр</th>
+                </tr>
+              </thead>
+              <tbody id="rulesTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TAB 5: PASSED ── -->
+      <section class="tab-pane" id="pane-passed">
+        <div class="card" style="padding: 14px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 18px; font-weight: 700; color: #f0f2f5;">Заявки, прошедшие проверку</div>
+            <div style="font-size: 20px; font-weight: 700; color: #4ade80;" id="countPassed">0</div>
+          </div>
+          <div class="bulk-row">
+            <button type="button" class="cand-check" id="selAllPassed" title="Выбрать все видимые (Ctrl+A)" aria-label="Выбрать все" onclick="toggleSelectAll('passed')"></button>
+            <input type="text" class="input-text" placeholder="Поиск по нику, статику, дискорду..." id="searchPassed" oninput="filterPassedList()">
+          </div>
+          <div class="bulk-bar" id="bulkBarPassed">
+            <div class="bulk-bar-inner">
+              <div class="bulk-count"><span class="bulk-count-num" id="bulkCountPassed">0</span><span class="bulk-count-label">выбрано</span></div>
+              <div class="bulk-actions">
+                <button type="button" class="bulk-btn" onclick="bulkCopy('passed')">📋 Копировать</button>
+                <button type="button" class="bulk-btn bulk-danger" onclick="bulkMove('passed')">❌ Отклонить выбранные</button>
+                <button type="button" class="bulk-btn bulk-ghost" onclick="clearSelection('passed')" title="Esc">Снять выбор</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="candidate-list" id="passedList">
+          <!-- Candidate cards -->
+        </div>
+      </section>
+
+      <!-- ── TAB 6: FAILED ── -->
+      <section class="tab-pane" id="pane-failed">
+        <div class="card" style="padding: 14px 20px; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 18px; font-weight: 700; color: #f0f2f5;">Заявки, НЕ прошедшие проверку</div>
+            <div style="font-size: 20px; font-weight: 700; color: #f87171;" id="countFailed">0</div>
+          </div>
+          
+          <!-- Sub-filters -->
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-pill" id="subfilterAll" style="background: #3b1d24; color: #ffffff;" onclick="setFailedSubfilter('all')">❌ Все отклонённые (0)</button>
+            <button class="btn btn-pill" id="subfilterRegular" style="background: #1c1f2e; color: #94a3b8;" onclick="setFailedSubfilter('regular')">📋 Обычные отказы (0)</button>
+            <button class="btn btn-pill" id="subfilterBl" style="background: #1c1f2e; color: #fda4af;" onclick="setFailedSubfilter('blacklist')">🚫 ЧС лидеров (0)</button>
+          </div>
+
+          <div class="bulk-row">
+            <button type="button" class="cand-check" id="selAllFailed" title="Выбрать все видимые (Ctrl+A)" aria-label="Выбрать все" onclick="toggleSelectAll('failed')"></button>
+            <input type="text" class="input-text" placeholder="Поиск по нику, статику, дискорду..." id="searchFailed" oninput="filterFailedList()">
+          </div>
+          <div class="bulk-bar" id="bulkBarFailed">
+            <div class="bulk-bar-inner">
+              <div class="bulk-count"><span class="bulk-count-num" id="bulkCountFailed">0</span><span class="bulk-count-label">выбрано</span></div>
+              <div class="bulk-actions">
+                <button type="button" class="bulk-btn" onclick="bulkCopy('failed')">📋 Копировать</button>
+                <button type="button" class="bulk-btn bulk-success" onclick="bulkMove('failed')">✅ Одобрить выбранные</button>
+                <button type="button" class="bulk-btn bulk-ghost" onclick="clearSelection('failed')" title="Esc">Снять выбор</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="candidate-list" id="failedList">
+          <!-- Failed cards -->
+        </div>
+      </section>
+
+      <!-- ── TAB 7: ONLINE ── -->
+      <section class="tab-pane" id="pane-online">
+        <div class="card" style="padding: 16px 20px; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 17px; font-weight: 700; color: #f0f2f5;">🕒 Статистика онлайна кандидатов (День / Неделя / Месяц / 2 месяца)</div>
+            <div style="font-size: 20px; font-weight: 700; color: #38bdf8;" id="countOnline">0</div>
+          </div>
+
+          <div class="subcard" style="background: #10121a; font-size: 12px; color: #94a3b8; border-color: #1e2230;">
+            ℹ️ Проверяются кандидаты из вкладки «Подошли». Онлайн считается по «Логи → Сессии» в Админ-панели за последние 2 месяца (время МСК).
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <span style="font-size: 13px; font-weight: 600; color: #e2e8f0;">Кулдаун:</span>
+            <select class="input-text" id="onlineCooldown" style="width: 110px;">
+              <option value="20">20 сек</option>
+              <option value="25" selected>25 сек</option>
+              <option value="30">30 сек</option>
+            </select>
+            <button class="btn btn-primary" id="btnStartOnline" onclick="startOnlineCheck()">▶️ Запустить проверку</button>
+            <button class="btn btn-danger" id="btnCancelOnline" disabled onclick="cancelOnlineCheck()">⏹ Отменить</button>
+            <button class="btn btn-secondary btn-clear" id="btnClearOnline" onclick="clearOnlineResults()" title="Удалить результаты проверки онлайна">🧹 Очистить</button>
+            <button class="btn btn-secondary" style="margin-left: auto;" onclick="exportOnlineStats()">📋 Экспорт статистики</button>
+          </div>
+
+          <div style="margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 6px;">
+              <span id="onlineProgText">Готово к проверке онлайна</span>
+              <span id="onlineProgPercent">0%</span>
+            </div>
+            <div style="background: #1e2233; height: 8px; border-radius: 4px; overflow: hidden;">
+              <div id="onlineProgressBar" style="background: var(--cyan); width: 0%; height: 100%; transition: width 0.2s ease;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="candidate-list" id="onlineList">
+          <!-- Online cards -->
+        </div>
+      </section>
+
+      <!-- ── TAB 8: SETTINGS ── -->
+      <section class="tab-pane" id="pane-settings">
+        <div style="display: grid; grid-template-columns: 240px 1fr; gap: 16px; height: 100%;">
+          
+          <!-- Category List -->
+          <div class="card" style="padding: 14px 10px; gap: 6px;">
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; padding-left: 8px;">НАСТРОЙКИ</div>
+            <div class="menu-btn menu-btn-primary" id="btnSetNav-appearance" onclick="showSettingsSection('appearance')">01. Основные</div>
+            <div class="menu-btn menu-btn-secondary" id="btnSetNav-blacklist" onclick="showSettingsSection('blacklist')">02. ЧС лидеров</div>
+            <div class="menu-btn menu-btn-secondary" id="btnSetNav-presets" onclick="showSettingsSection('presets')">03. Шаблоны фильтров</div>
+            <div class="menu-btn menu-btn-secondary" id="btnSetNav-online" onclick="showSettingsSection('online')">04. Проверка онлайна</div>
+            <div class="menu-btn menu-btn-secondary" id="btnSetNav-export" onclick="showSettingsSection('export')">05. Быстрый экспорт</div>
+            <div class="menu-btn menu-btn-secondary" id="btnSetNav-guides" onclick="showSettingsSection('guides')">06. Помощник и гиды</div>
+
+            <button class="site-link" onclick="openSite()" title="Открыть сайт Forum Checker">🌐 Сайт программы</button>
+            <div id="settingsAppVersion" style=" font-size: 11px; color: #64748b; padding-left: 8px; font-weight: 700;">
+              Forum Checker v3.5.0
+            </div>
+          </div>
+
+          <!-- Section Content -->
+          <div class="card" id="settingsContainer">
+            <!-- Dynamically populated section -->
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ── MODAL: DISCLAIMER ── -->
+  <div class="modal-overlay" id="modalDisclaimer">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header">
+        <span>⚠️ ВАЖНАЯ ИНФОРМАЦИЯ И ДИСКЛЕЙМЕР</span>
+      </div>
+      <div class="modal-body" style="display: flex; gap: 20px; align-items: flex-start;">
+        <img src="assets/mascot_disclaimer.png" style="width: 135px; height: auto; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6));" alt="Disclaimer Mascot">
+        <div style="font-size: 13px; line-height: 1.6; color: #cbd5e1; flex: 1;">
+          <p style="margin-bottom: 12px;"><strong style="color: #ffffff;">Что это:</strong> Forum Checker - специализированный инструмент куратора и старшей администрации для автоматического сбора заявок на лидерский пост с форума, фильтрации по шаблону, отсева ЧС лидеров и проверки онлайна в одном окне.</p>
+          <p style="margin-bottom: 12px;"><strong style="color: #ffffff;">Откуда информация:</strong> Официальный форум Majestic RP (forum.majestic-rp.ru) и админ-панель (admin.majestic-files.net/panel).</p>
+          <p style="margin-bottom: 12px;"><strong style="color: #ffffff;">Чего здесь нет:</strong> Программа не передаёт пароли, куки или токены на сторонние серверы. Все данные хранятся исключительно локально на вашем ПК.</p>
+          <p style="margin-bottom: 12px;"><strong style="color: #ffffff;">Ответственность:</strong> За итоговый список кандидатов отвечает проверяющий администратор. Авто-фильтры созданы для ускорения рутины - спорные заявки всегда проверяйте кнопкой «Подробнее».</p>
+          <p><strong style="color: #ffffff;">Безопасность панели:</strong> При проверке онлайна действует защитный кулдаун (25 секунд между кандидатами) для предотвращения лимита запросов.</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #94a3b8; cursor: pointer;">
+          <input type="checkbox" id="chkDontShowDisclaimer"> Больше не показывать
+        </label>
+        <button class="btn btn-danger" id="btnDisclaimerContinue" disabled onclick="acceptDisclaimer()">Продолжить (10)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: CANDIDATE DETAIL ── -->
+  <div class="modal-overlay" id="modalDetail">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span id="detailTitle">Детали заявки</span>
+        <span class="mascot-bubble-close" onclick="closeModal('modalDetail')">✕</span>
+      </div>
+      <div class="modal-body" id="detailBody">
+        <!-- Structured details -->
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <button class="btn btn-primary" id="btnDetailCopyAll" onclick="copyDetailModalAll()">📋 Копировать всё</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-danger" id="btnDetailReject" onclick="detailRejectCandidate()" style="display: none;">❌ Отклонить</button>
+          <button class="btn btn-success" id="btnDetailApprove" onclick="detailApproveCandidate()" style="display: none;">✅ Одобрить</button>
+          <button class="btn btn-secondary" onclick="closeModal('modalDetail')">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: ADD / EDIT RULE ── -->
+  <div class="modal-overlay" id="modalRule">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <span id="ruleModalTitle">Добавить фильтр</span>
+        <span class="mascot-bubble-close" onclick="closeModal('modalRule')">✕</span>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="font-size: 12px; color: #94a3b8; margin-bottom: 4px; display: block;">Название поля:</label>
+          <input type="text" class="input-text" id="ruleName" placeholder="например: Возраст или Discord">
+        </div>
+        <div>
+          <label style="font-size: 12px; color: #94a3b8; margin-bottom: 4px; display: block;">Ключевое слово в шаблоне:</label>
+          <input type="text" class="input-text" id="ruleKw" placeholder="например: Ваш возраст:">
+        </div>
+        <div>
+          <label style="font-size: 12px; color: #94a3b8; margin-bottom: 4px; display: block;">Тип фильтра:</label>
+          <select class="input-text" id="ruleType" onchange="onRuleTypeChange()">
+            <option value="digits">🔢 Только цифры (Static ID, возраст, числовой Discord ID)</option>
+            <option value="not_empty">📝 Не пустое (любой текст / пункт обязательно заполнен)</option>
+            <option value="alpha">🔤 Только буквы (реальное имя без цифр)</option>
+            <option value="none">👁️ Без проверки (просто извлечь в карточку)</option>
+            <option value="min">📈 Число &gt;= (минимальное число, например возраст &gt;= 16)</option>
+            <option value="max">📉 Число &lt;= (максимальное число, например возраст &lt;= 35)</option>
+            <option value="contains">🔍 Содержит текст</option>
+            <option value="not_contains">🚫 НЕ содержит текст (запрещённые слова)</option>
+            <option value="discord">💬 Формат Discord (проверка ID или тега)</option>
+            <option value="regex">⚡ Регулярное выражение (RegEx)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 12px; color: #94a3b8; margin-bottom: 4px; display: block;" id="ruleParamLabel">Параметр фильтра (число, текст, regex):</label>
+          <input type="text" class="input-text" id="ruleParam" placeholder="например: 16">
+          <div id="ruleParamHelp" style="font-size: 11px; color: #c4b5fd; margin-top: 4px; min-height: 16px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalRule')">Отмена</button>
+        <button class="btn btn-primary" onclick="saveRuleModal()">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: CONFIRM DELETE RULE ── -->
+  <div class="modal-overlay" id="modalConfirmDelete">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <span id="confirmDeleteTitle">🗑️ Удаление фильтра</span>
+        <span class="mascot-bubble-close" onclick="closeModal('modalConfirmDelete')">✕</span>
+      </div>
+      <div class="modal-body" style="font-size: 13px; line-height: 1.6; color: #e2e8f0;">
+        <p id="confirmDeleteMsg" style="margin-bottom: 8px;">Вы уверены, что хотите удалить выбранный фильтр?</p>
+        <div style="font-size: 11px; color: #94a3b8; background: #131522; padding: 8px 12px; border-radius: 6px; border: 1px solid #282d40;">
+          💡 Нажмите <kbd style="background: #252838; padding: 2px 6px; border-radius: 4px; border: 1px solid #3c4155; color: #c4b5fd;">Enter</kbd> для подтверждения или <kbd style="background: #252838; padding: 2px 6px; border-radius: 4px; border: 1px solid #3c4155; color: #cbd5e1;">Esc</kbd> для отмены.
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-secondary" onclick="closeModal('modalConfirmDelete')">Отмена</button>
+        <button class="btn btn-danger" id="btnConfirmDeleteOk" onclick="executeDeleteRule()">Удалить (Enter)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: LICENSE ACTIVATION ── -->
+  <div class="modal-overlay" id="modalLicense" style="z-index: 2000;">
+    <div class="modal-card" style="max-width: 580px; border-color: #8b5cf6;">
+      <div class="modal-header" style="background: #171524;">
+        <span style="color: #c4b5fd;">🔐 ТРЕБУЕТСЯ АКТИВАЦИЯ ДОСТУПА</span>
+      </div>
+      <div class="modal-body" style="font-size: 13px; line-height: 1.6; color: #cbd5e1;">
+        <p style="margin-bottom: 12px; color: #e2e8f0;">
+          Для работы программы необходим персональный ключ активации с привязкой к материнской плате вашего ПК.
+        </p>
+        <div style="background: #10121a; border: 1px solid #282b3c; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+          <div style="font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Ваш аппаратный ID (HWID):</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <code id="licenseHwidText" style="font-family: monospace; font-size: 14px; color: #a78bfa; flex: 1;">FC-PC-XXXX-XXXX-XXXX</code>
+            <button class="btn btn-secondary" onclick="copyHwid()" style="padding: 6px 12px; font-size: 11px;">📋 Скопировать</button>
+          </div>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label style="font-size: 12px; color: #94a3b8; margin-bottom: 6px; display: block;">Введите полученный ключ активации (формат HERO-KEY-...):</label>
+          <input type="text" class="input-text" id="licenseKeyInput" placeholder="HERO-KEY-XXXX-XXXX-XXXX-XXXX" style="font-family: monospace; font-size: 13px;">
+          <div id="licenseError" style="color: #f87171; font-size: 12px; margin-top: 6px;"></div>
+        </div>
+      </div>
+        <div class="license-help">
+          <div class="license-help-title">Как получить ключ</div>
+          <div class="license-help-text">Скопируй код ПК и отправь его в Discord <b class="mono">_pinqx</b> - в ответ придёт ключ.</div>
+          <div class="license-help-actions">
+            <button class="btn btn-discord" onclick="copyHwidAndOpenDiscord()">
+              <svg viewBox="0 0 24 24"><path d="M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52c-.21.38-.45.87-.61 1.25a18.27 18.27 0 0 0-5.49 0 12.6 12.6 0 0 0-.62-1.25 19.74 19.74 0 0 0-4.89 1.52C.53 9.05-.32 13.58.1 18.06a19.9 19.9 0 0 0 6.02 3.06c.46-.63.87-1.3 1.23-1.99a13.1 13.1 0 0 1-1.88-.9l.37-.29c3.93 1.79 8.18 1.79 12.06 0l.37.3c-.6.35-1.22.65-1.87.89.36.7.78 1.36 1.23 1.99a19.84 19.84 0 0 0 6-3.03c.5-5.18-.84-9.67-3.55-13.66ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.96-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.96 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Z"/></svg>
+              Скопировать код и открыть Discord
+            </button>
+            <button class="btn btn-secondary" onclick="openSite()">🌐 Сайт программы</button>
+          </div>
+        </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="activateLicenseKey()" style="padding: 8px 24px; font-weight: 700;">Активировать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: LICENSE REVOKED ── -->
+  <div class="modal-overlay" id="modalRevoked" style="z-index: 2000;">
+    <div class="modal-card" style="max-width: 580px; border-color: #ef4444;">
+      <div class="modal-header" style="background: #271418;">
+        <span style="color: #fca5a5;">🚫 ДОСТУП ПРИОСТАНОВЛЕН</span>
+      </div>
+      <div class="modal-body" style="font-size: 13px; line-height: 1.6; color: #cbd5e1;">
+        <p style="margin-bottom: 12px; color: #fecaca; font-weight: 600;">
+          Доступ к Forum Checker для вашего ПК временно заблокирован создателем программы.
+        </p>
+        <div style="background: #151014; border: 1px solid #451b24; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+          <div style="font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Ваш аппаратный ID (HWID):</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <code id="revokedHwidText" style="font-family: monospace; font-size: 14px; color: #f87171; flex: 1;">FC-PC-XXXX-XXXX-XXXX</code>
+            <button class="btn btn-secondary" onclick="copyRevokedHwid()" style="padding: 6px 12px; font-size: 11px;">📋 Скопировать</button>
+          </div>
+        </div>
+        <p style="font-size: 12px; color: #94a3b8;">
+          Свяжитесь с автором для восстановления доступа. После разблокировки нажмите кнопку «Проверить снова».
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="checkRevocationAgain()" style="padding: 8px 20px;">🔄 Проверить снова</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FLOATING INTERACTIVE TUTORIAL (MADESK STYLE WITH PROMINENT GUIDE) ── -->
+  <div class="tutorial-card" id="tutorialCard" style="display: none;">
+    <div class="tutorial-layout">
+      <!-- Left side: Large expressive Guide Character -->
+      <div class="tutorial-character-stage">
+        <div class="tutorial-character-glow"></div>
+        <img src="assets/mascot_talk.png" id="tutorialAvatar" class="tutorial-avatar-large" alt="Guide">
+        <div class="tutorial-guide-plate">
+          <span class="tutorial-guide-name" id="tutorialGuideName">hero</span>
+        </div>
+      </div>
+
+      <!-- Right side: Dialogue Pane -->
+      <div class="tutorial-dialogue-pane">
+        <div class="tutorial-header">
+          <div class="tutorial-badge" id="tutorialBadge">1/8 • 🔑 Авторизация</div>
+          <div class="tutorial-header-actions">
+            <button class="tutorial-close-btn" id="btnTutSound" onclick="toggleTutSound()" title="Вкл/Выкл звук">🔊</button>
+            <button class="tutorial-close-btn" onclick="finishTutorial()" title="Закрыть обучение">✕</button>
+          </div>
+        </div>
+
+        <div class="tutorial-body">
+          <div class="tutorial-bubble-arrow"></div>
+          <div class="tutorial-step-title" id="tutorialStepTitle" style="font-weight: 700; font-size: 15px; color: #ffffff; margin-bottom: 6px;"></div>
+          <p class="tutorial-text">
+            <span class="tut-ghost" id="tutorialTextGhost" aria-hidden="true"></span>
+            <span class="tut-typed" id="tutorialText"></span>
+          </p>
+        </div>
+
+        <div class="tutorial-footer">
+          <button class="btn btn-secondary tut-btn tut-btn-icon" id="btnTutPrev" onclick="prevTutorialStep()" disabled title="Назад" aria-label="Назад">‹</button>
+          <button class="btn btn-secondary tut-btn tut-btn-skip" onclick="finishTutorial()">Пропустить</button>
+          <div class="tut-step-indicator" id="tutorialStepIndicator">Шаг 1 из 20</div>
+          <button class="btn btn-primary tut-btn tut-btn-next" id="btnTutNext" onclick="nextTutorialStep()" style="background: #2563eb; border-color: #3b82f6;">
+            Далее ➡️ <kbd class="tut-enter-badge">Enter ↵</kbd>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TUTORIAL SPOTLIGHT BACKDROP (MADESK STYLE) ── -->
+  <svg id="tutorialSpotlightOverlay" class="tutorial-spotlight-overlay" style="display: none;">
+    <defs>
+      <mask id="tutorialSpotlightMask">
+        <rect x="0" y="0" width="100%" height="100%" fill="white" />
+        <rect id="tutorialCutout" x="0" y="0" width="0" height="0" rx="10" ry="10" fill="black" />
+      </mask>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(3, 5, 12, 0.78)" mask="url(#tutorialSpotlightMask)" />
+    <rect id="tutorialCutoutBorder" x="0" y="0" width="0" height="0" rx="10" ry="10" fill="none" stroke="#2563eb" stroke-width="2.5" />
+  </svg>
+
+  <!-- ── FLOATING TOAST NOTIFICATIONS ── -->
+  <div id="appToastContainer"></div>
+
+  <!-- ── КРАЯ ДЛЯ ИЗМЕНЕНИЯ РАЗМЕРА ОКНА (окно без системной рамки) ── -->
+  <div class="win-grip g-top" data-edge="top"></div>
+  <div class="win-grip g-bottom" data-edge="bottom"></div>
+  <div class="win-grip g-left" data-edge="left"></div>
+  <div class="win-grip g-right" data-edge="right"></div>
+  <div class="win-grip g-tl" data-edge="topleft"></div>
+  <div class="win-grip g-tr" data-edge="topright"></div>
+  <div class="win-grip g-bl" data-edge="bottomleft"></div>
+  <div class="win-grip g-br" data-edge="bottomright"></div>
+
+  <!-- ── TUTORIAL POINTING HAND ── -->
+  <div class="tutorial-pointing-hand" id="tutorialPointingHand" style="display: none;">
+    <img id="tutorialHandImg" src="assets/hands/hand_hero.png" alt="Pointing Hand">
+  </div>
+
+  <script>
+    // Применяем сохранённый вид меню до инициализации, чтобы не было мигания
+    try { var _ml = localStorage.getItem('fc-menu-layout'); if (_ml === 'rail') document.body.className = 'layout-rail'; } catch (e) {}
+    try {
+      var _lv = JSON.parse(localStorage.getItem('fc-list-view') || '{}');
+      if (_lv.density === 'compact') document.body.classList.add('cand-compact');
+      if (_lv.density === 'rows') document.body.classList.add('cand-rows');
+      if (_lv.cols === 2 || _lv.cols === 3) document.body.classList.add('cand-cols-' + _lv.cols);
+    } catch (e) {}
+  </script>
+  <script src="demo-data.js"></script>
+  <script src="demo-live.js"></script>
+  <script src="splash.js"></script>
+  <script src="app.js"></script>
+  <script src="demo-ui.js"></script>
+</body>
+</html>
+
