@@ -6,15 +6,16 @@
   <title>Forum Checker - демо</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="demo-ui.css">
+  <link rel="stylesheet" href="report.css">
 </head>
 <body class="layout-dock">
 
   <!-- ── НАВИГАЦИЯ: нижний док (по умолчанию) или боковая рейка (Настройки → Основные) ── -->
   <aside class="sidebar app-nav" id="appNav">
-    <div class="nav-logo" title="Forum Checker v4.0.0 · byhero">
+    <div class="nav-logo" title="Forum Checker v4.1.0 · byhero">
       <svg class="fc-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 16H33V26.5A5.5 5.5 0 0 1 33 37.5V48H13A5 5 0 0 1 8 43V21A5 5 0 0 1 13 16Z" fill="#8B7CF6"></path><path d="M17 24V40M17 24H25M17 32H23.5" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M35 16H51A5 5 0 0 1 56 21V43A5 5 0 0 1 51 48H35V38.6A6.6 6.6 0 0 0 35 25.4Z" fill="#E8E9EE"></path><path d="M51 27.2A6.6 6.6 0 1 0 51 36.8" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round"></path></svg>
     </div>
 
@@ -86,7 +87,7 @@
       </div>
     </div>
     <!-- Версия билда под гидом (видна в режиме боковой рейки) -->
-    <div class="rail-build" id="railBuildVersion">v4.0.0</div>
+    <div class="rail-build" id="railBuildVersion">v4.1.0</div>
 
     <!-- Mascot Menu Popup -->
     <div class="mascot-menu" id="mascotMenu">
@@ -115,7 +116,7 @@
   <!-- ── MAIN AREA ── -->
   <main class="main-area">
     <header class="main-header">
-      <div class="header-brand" title="Forum Checker v4.0.0 · byhero">
+      <div class="header-brand" title="Forum Checker v4.1.0 · byhero">
         <div class="sidebar-logo-box">
       <svg class="fc-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 16H33V26.5A5.5 5.5 0 0 1 33 37.5V48H13A5 5 0 0 1 8 43V21A5 5 0 0 1 13 16Z" fill="#8B7CF6"></path><path d="M17 24V40M17 24H25M17 32H23.5" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path><path d="M35 16H51A5 5 0 0 1 56 21V43A5 5 0 0 1 51 48H35V38.6A6.6 6.6 0 0 0 35 25.4Z" fill="#E8E9EE"></path><path d="M51 27.2A6.6 6.6 0 1 0 51 36.8" fill="none" stroke="#0E0F14" stroke-width="4" stroke-linecap="round"></path></svg>
         </div>
@@ -128,7 +129,7 @@
         <!-- Статус и версия (раньше были в нижней строке) -->
         <div class="header-meta">
           <div class="header-status" id="statusBarText">Готово</div>
-          <div class="header-version" id="statusBarVersion" title="Версия Forum Checker">v4.0.0</div>
+          <div class="header-version" id="statusBarVersion" title="Версия Forum Checker">v4.1.0</div>
         </div>
         <!-- Кнопки окна (окно без системной рамки) -->
         <div class="win-controls">
@@ -361,7 +362,7 @@
 
             <button class="site-link" onclick="openSite()" title="Открыть сайт Forum Checker">🌐 Сайт программы</button>
             <div id="settingsAppVersion" style=" font-size: 11px; color: #64748b; padding-left: 8px; font-weight: 700;">
-              Forum Checker v4.0.0
+              Forum Checker v4.1.0
             </div>
           </div>
 
@@ -642,6 +643,8 @@
   <script src="splash.js"></script>
   <script src="app.js"></script>
   <script src="demo-ui.js"></script>
+  <script src="vendor/html2canvas.min.js"></script>
+  <script src="report.js"></script>
 </body>
 </html>
 

@@ -1,0 +1,55 @@
+/* Отчёт картинкой: окно выбора стиля и два вида отчёта (Чек, Досье) */
+.rp-card { width: min(640px, 94vw); }
+.rp-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.rp-seg { display: flex; background: var(--bg-raised, #171821); border: 1px solid var(--line-control, #2A2C37); border-radius: 10px; padding: 3px; gap: 2px; }
+.rp-seg button { border: 0; background: transparent; color: var(--text-secondary, #A3A7B3); font: 600 13px Geist, Inter, system-ui, sans-serif; padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+.rp-seg button.on { background: var(--acc, #8B7CF6); color: #fff; }
+.rp-hint { font-size: 12px; color: var(--text-muted, #8E92A0); }
+.rp-stage { background: radial-gradient(700px 300px at 50% -10%, #1a1830, transparent), var(--bg-app, #0E0F14); border: 1px solid var(--line-card, #1F2129);
+  border-radius: 12px; min-height: 420px; max-height: 62vh; overflow: auto; display: flex; justify-content: center; align-items: flex-start; padding: 26px 12px; }
+.rp-foot { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
+.rp-btn-report { white-space: nowrap; }
+
+/* ── Чек ── */
+.rp-rc { position: relative; width: 330px; }
+.rp-slot { height: 16px; background: #050508; border-radius: 10px; box-shadow: inset 0 3px 6px #000, 0 1px 0 #2a2c37; position: relative; z-index: 2; margin: 0 -14px; }
+.rp-clip { overflow: hidden; margin-top: -8px; }
+.rp-receipt { background: #f6f3ea; color: #1d1c19; font: 500 12.5px/1.5 'JetBrains Mono', Consolas, monospace; padding: 22px 20px 34px; position: relative;
+  transform: translateY(-100%); animation: rpPrint 1.8s steps(28) .15s forwards;
+  -webkit-mask: radial-gradient(7px at 50% 100%, #0000 98%, #000) 50% 100%/14px 100% repeat-x; mask: radial-gradient(7px at 50% 100%, #0000 98%, #000) 50% 100%/14px 100% repeat-x; }
+@keyframes rpPrint { to { transform: none; } }
+.rp-receipt .c { text-align: center; }
+.rp-receipt .logo { font: 800 17px Geist, Inter, sans-serif; letter-spacing: .02em; }
+.rp-receipt hr { border: 0; border-top: 1.5px dashed #b6b0a1; margin: 10px 0; }
+.rp-receipt .row { display: flex; justify-content: space-between; gap: 10px; }
+.rp-receipt .row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-receipt .row span:last-child { text-align: right; white-space: nowrap; }
+.rp-receipt .x { color: #c0392b; font-weight: 700; }
+.rp-receipt .why { color: #c0392b; font-size: 11.5px; padding-left: 10px; }
+.rp-receipt .total { font: 800 20px Geist, Inter, sans-serif; display: flex; justify-content: space-between; margin-top: 4px; }
+.rp-receipt .bc { height: 46px; margin: 14px 0 4px; background: repeating-linear-gradient(90deg, #1d1c19 0 2px, transparent 2px 4px, #1d1c19 4px 5px, transparent 5px 8px, #1d1c19 8px 11px, transparent 11px 12px); }
+.rp-receipt .thanks { font-family: Caveat, cursive; font-size: 22px; text-align: center; margin-top: 6px; color: #4a463d; }
+.rp-receipt .small { font-size: 10.5px; color: #8a8273; margin-top: 8px; }
+
+/* ── Досье ── */
+.rp-ds { width: 470px; max-width: 100%; position: relative; filter: drop-shadow(0 26px 34px rgba(0,0,0,.5)); }
+.rp-ds .tab { width: 170px; height: 30px; background: #c9a96e; border-radius: 10px 10px 0 0; margin-left: 18px; font: 800 11px Geist, Inter, sans-serif; letter-spacing: .14em; color: #5b4520; display: flex; align-items: center; padding-left: 14px; }
+.rp-ds .folder { background: #d4b47a; border-radius: 0 12px 12px 12px; padding: 16px; }
+.rp-ds .paper { background: #fbf8f1; color: #2b2925; border-radius: 4px; padding: 22px 24px 26px; position: relative; font: 500 13px/1.55 Geist, Inter, sans-serif; box-shadow: 0 2px 0 #e6dfcf, 0 4px 0 #ddd4c1; transform: rotate(-.6deg); overflow: hidden; }
+.rp-ds h4 { margin: 0 0 2px; font: 800 11px Geist, Inter, sans-serif; letter-spacing: .16em; color: #8a8273; }
+.rp-ds .nm { font: 800 24px Geist, Inter, sans-serif; letter-spacing: -.02em; max-width: 290px; overflow-wrap: anywhere; }
+.rp-ds .photo { position: absolute; right: 22px; top: 18px; width: 92px; height: 110px; background: #ddd5c4; border: 5px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,.18); transform: rotate(4deg); display: grid; place-items: center; font: 900 30px Geist, Inter, sans-serif; color: #8a8273; }
+.rp-ds .clipx { position: absolute; right: 58px; top: 6px; width: 16px; height: 46px; border: 3px solid #9aa0a8; border-radius: 9px; z-index: 2; transform: rotate(4deg); }
+.rp-ds dl { margin: 16px 0 0; display: grid; grid-template-columns: 112px 1fr; gap: 5px 12px; font-size: 12.5px; max-width: 300px; }
+.rp-ds dt { color: #8a8273; font-weight: 600; } .rp-ds dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.rp-ds .notes { margin-top: 18px; border-top: 1px solid #e4dccb; padding-top: 12px; }
+.rp-ds .note { font-family: Caveat, cursive; font-size: 21px; line-height: 1.15; color: #c0392b; opacity: 0; animation: rpWrite .5s forwards; display: flex; gap: 8px; }
+.rp-ds .note.g { color: #1e8e5a; }
+@keyframes rpWrite { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+.rp-ds .stamp { position: absolute; left: 50%; top: 46%; font: 900 40px Geist, Inter, sans-serif; letter-spacing: .14em; padding: 6px 20px; border: 6px double currentColor; border-radius: 8px; white-space: nowrap;
+  transform: translate(-50%, -50%) rotate(-12deg) scale(3); opacity: 0; animation: rpSlam .4s 1.4s cubic-bezier(.3,1.6,.5,1) forwards; mix-blend-mode: multiply; }
+@keyframes rpSlam { 70% { opacity: .9; transform: translate(-50%, -50%) rotate(-12deg) scale(.95); } 100% { opacity: .78; transform: translate(-50%, -50%) rotate(-12deg) scale(1); } }
+.rp-ds .sign { margin-top: 18px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #8a8273; }
+.rp-ds .sign b { font-family: Caveat, cursive; font-size: 26px; color: #2b3a8c; font-weight: 700; }
+
+.rp-export * { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
