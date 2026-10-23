@@ -1,0 +1,55 @@
+# Сообщение в Discord-канал #обновления, когда выходит новая версия Forum Checker.
+# Адрес вебхука лежит в секрете DISCORD_WEBHOOK (Settings → Secrets and variables → Actions).
+# Если завести секрет DISCORD_ROLE_ID, сообщение будет пинговать эту роль.
+name: Discord - новая версия
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Версия для повторной отправки (пусто - последняя)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Отправить сообщение
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          ROLE_ID: ${{ secrets.DISCORD_ROLE_ID }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WEBHOOK}" ]; then echo "Нет секрета DISCORD_WEBHOOK"; exit 1; fi
+          if [ -n "${TAG}" ]; then path="releases/tags/${TAG}"; else path="releases/latest"; fi
+          gh api "repos/${REPO}/${path}" > rel.json
+          tag=$(jq -r .tag_name rel.json)
+          exe=$(jq -r '[.assets[] | select(.name | endswith(".exe"))][0].browser_download_url // empty' rel.json)
+          [ -n "$exe" ] || exe=$(jq -r .html_url rel.json)
+          mention=""
+          [ -n "${ROLE_ID}" ] && mention="<@&${ROLE_ID}>"
+          jq -n --slurpfile r rel.json --arg exe "$exe" --arg tag "$tag" --arg mention "$mention" --arg role "${ROLE_ID}" '
+            ($r[0].body // "" | gsub("\r"; "")) as $notes |
+            {
+              username: "Forum Checker",
+              content: (if $mention == "" then null else "\($mention) вышла новая версия!" end),
+              allowed_mentions: { roles: (if $role == "" then [] else [$role] end) },
+              embeds: [{
+                title: "Forum Checker \($tag)",
+                url: $r[0].html_url,
+                color: 9141494,
+                description: (($notes | if length > 3500 then .[0:3500] + "…" else . end) + "\n\n**[Скачать \($tag)](\($exe))** · [Сайт программы](https://mihacloude228.github.io/forum-checker/)"),
+                footer: { text: "Программа сама предложит обновиться при запуске" },
+                timestamp: $r[0].published_at
+              }]
+            }' > msg.json
+          curl -sS -f -X POST -H "Content-Type: application/json" --data @msg.json "${WEBHOOK}"
+          echo "Отправлено: ${tag}"
