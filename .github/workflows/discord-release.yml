@@ -30,6 +30,8 @@ jobs:
           set -euo pipefail
           # убираем невидимые символы (BOM, переносы строк), которые могли попасть в секрет при копировании
           WEBHOOK=$(printf '%s' "${WEBHOOK}" | LC_ALL=C tr -cd 'A-Za-z0-9:/._-')
+          # очищенный адрес отличается от секрета, поэтому отдельно просим GitHub прятать его в журнале
+          echo "::add-mask::${WEBHOOK}"
           ROLE_ID=$(printf '%s' "${ROLE_ID}" | tr -cd '0-9')
           if [ -z "${WEBHOOK}" ]; then echo "Нет секрета DISCORD_WEBHOOK"; exit 1; fi
           if [ -n "${TAG}" ]; then path="releases/tags/${TAG}"; else path="releases/latest"; fi
