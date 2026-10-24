@@ -1,5 +1,5 @@
 /* ═════════════════════════════════════════════════════════════
-   FORUM CHECKER — ДИЗАЙНБУК v3.0 STYLE SYSTEM
+   FORUM CHECKER - ДИЗАЙНБУК v3.0 STYLE SYSTEM
    Тихий интерфейс для быстрой проверки заявок (Geist + JetBrains Mono)
    ═════════════════════════════════════════════════════════════ */
 
@@ -268,7 +268,7 @@ body.layout-dock .nav-tip {
 body.layout-dock .nav-item:hover .nav-tip,
 body.layout-dock .nav-search:hover .nav-tip { transform: translateX(-50%); }
 body.layout-dock .nav-sep { width: 1px; height: 38px; margin: 0 5px 8px; }
-/* Контент заканчивается над доком — меню ничего не перекрывает (в т.ч. внутренние прокрутки, как в Настройках) */
+/* Контент заканчивается над доком - меню ничего не перекрывает (в т.ч. внутренние прокрутки, как в Настройках) */
 body.layout-dock .content-box { padding-bottom: 20px; margin-bottom: 98px; }
 
 /* ── ВАРИАНТ 2 · СТАТИЧНАЯ БОКОВАЯ РЕЙКА ── */
@@ -2160,7 +2160,7 @@ body.layout-dock .status-bar { flex-direction: row-reverse; }
 .tut-ghost { visibility: hidden; display: block; }
 .tut-typed { position: absolute; left: 0; top: 0; right: 0; }
 
-/* v3.2.0 · нижняя панель обучения всегда в одну строку — карточка не меняет высоту */
+/* v3.2.0 · нижняя панель обучения всегда в одну строку - карточка не меняет высоту */
 .tutorial-footer { flex-wrap: nowrap; }
 .tut-step-indicator { display: none; }
 .tutorial-footer .tut-btn-icon { width: 36px; height: 34px; padding: 0; justify-content: center; font-size: 20px; line-height: 1; }
