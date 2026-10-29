@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forum Checker</title>
+<meta name="description" content="Сайт и поддержка Forum Checker приостановлены.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --acc: #E81C5A;
+    --bg: #0A0A0A;
+    --card: #131313;
+    --line: rgba(255, 255, 255, 0.08);
+    --text: #FFFFFF;
+    --muted: rgba(255, 255, 255, 0.58);
+    --label: rgba(255, 255, 255, 0.42);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 0%, color-mix(in srgb, var(--acc) 10%, transparent), transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: "Geist", system-ui, sans-serif;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    padding: 36px 32px 32px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    text-align: center;
+  }
+  .mascot {
+    width: 180px;
+    height: auto;
+    margin: -8px auto 12px;
+    display: block;
+    filter: grayscale(0.55) brightness(0.85);
+    animation: sway 4.5s ease-in-out infinite;
+  }
+  @keyframes sway { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(4px) rotate(1deg); } }
+  .tag {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+    color: var(--acc);
+    font: 700 11px/1 "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h1 { margin: 0 0 14px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  p { margin: 0 0 26px; color: var(--muted); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+  .contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  .contact span { color: var(--label); font-size: 14px; }
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #181818;
+    color: var(--text);
+    font: 700 15px/1 "JetBrains Mono", monospace;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  button:hover { border-color: color-mix(in srgb, var(--acc) 50%, transparent); background: #1d1d1d; }
+  button small { color: var(--label); font: 500 12px/1 "Geist", sans-serif; }
+  @media (prefers-reduced-motion: reduce) { .mascot { animation: none; } }
+</style>
+</head>
+<body>
+  <main class="card">
+    <img class="mascot" src="mascot.png" alt="">
+    <div class="tag">Forum Checker</div>
+    <h1>Поддержка приостановлена</h1>
+    <p>Увы, мои труды не были оценены по достоинству. Из-за этого в данный момент сайт и поддержка приложения приостановлены на неопределённый срок.</p>
+    <div class="contact">
+      <span>Связь в Discord:</span>
+      <button id="ds" type="button" title="Скопировать">_pinqx <small id="dsHint">копировать</small></button>
+    </div>
+  </main>
+<script>
+  document.getElementById('ds').addEventListener('click', function () {
+    var hint = document.getElementById('dsHint');
+    var done = function () { hint.textContent = 'скопировано'; setTimeout(function () { hint.textContent = 'копировать'; }, 1600); };
+    try { navigator.clipboard.writeText('_pinqx').then(done, done); } catch (e) { done(); }
+  });
+</script>
+</body>
+</html>
